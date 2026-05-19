@@ -18,11 +18,7 @@ updates:
         patterns:
           - "*"
   - package-ecosystem: "terraform"
-    directories:
-      - "/terraform/01_sandbox"
-      - "/terraform/02_dev_nonprod"
-      - "/terraform/03_stg_prod"
-      - "/terraform/04_prd_prod"
+    directory: "/"
     schedule:
       interval: "weekly"
       day: "tuesday"

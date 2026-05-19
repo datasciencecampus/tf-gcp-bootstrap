@@ -1,42 +1,106 @@
-# terraform-template
+# terraform-ci-setup
 
-A starter template for creating reusable Terraform repos with best practices built in.
+Terraform module for wiring GitHub Actions or other CI automation to a pre-provisioned Terraform service account in Google Cloud.
 
-## Repository structure
+It is intended to be a small, reusable root module with secure-by-design defaults that are suitable for public-sector delivery and review.
 
-- `.github/`: GitHub workflows, templates, and Dependabot config.
-- `configs/`: shared configuration for linting and security tools.
-- `docs/`: project documentation and architecture records.
-- `terraform/`: Terraform code, split by environment.
-  - `01_sandbox/`: sandbox environment.
-  - `02_dev_nonprod/`: non-production development environment.
-  - `03_stg_prod/`: pre-production or staging environment.
-  - `04_prd_prod/`: production environment.
-  - `modules/`: reusable Terraform modules.
+The module does two things:
 
-## How to use
+- Grants a host CI service account permission to impersonate the target Terraform service account.
+- Assigns baseline and optional project-level IAM roles to the target Terraform service account in the target project.
 
-1. Change into the Terraform root for the environment you want to work with:
+## What this module manages
 
-   ```bash
-   cd terraform/ENVIRONMENT_ROOT
-   ```
+For the target Google Cloud project, this module creates:
 
-2. Initialise Terraform for that environment:
+- `google_service_account_iam_member` bindings for each impersonation role in `impersonation_roles`.
+- `google_project_iam_member` bindings for the target Terraform service account.
 
-   ```bash
-   terraform init
-   ```
+The target service account always receives these baseline project roles:
 
-3. Plan and apply your changes using the variables and backend settings appropriate to that environment:
+- `roles/serviceusage.serviceUsageConsumer`
+- `roles/iam.viewer`
 
-   ```bash
-   terraform plan
-   terraform apply
-   ```
+You can add more project roles with `target_service_account_additional_roles`.
 
-## Notes
+A minimal publishable example is available in `examples/minimal`.
 
-- Each environment root maps to a separate Google Cloud project and should be treated as its own trust boundary.
-- Environment usage, assurance expectations, and data handling guidance are described in `docs/environment-guidance.md`.
-- If backend settings change, run `terraform init -reconfigure`.
+## Usage
+
+```hcl
+module "terraform_ci_setup" {
+   source = "github.com/datasciencecampus/terraform-ci-setup"
+
+   project_id                 = "my-gcp-project"
+   host_service_account_email = "github-actions@host-project.iam.gserviceaccount.com"
+   target_service_account_email = "terraform@my-gcp-project.iam.gserviceaccount.com"
+
+   target_service_account_additional_roles = [
+      "roles/storage.admin",
+      "roles/compute.viewer",
+   ]
+}
+```
+
+Run Terraform from the repository root:
+
+```bash
+terraform init
+terraform plan
+terraform apply
+```
+
+## Inputs and behavior
+
+- `project_id` identifies the Google Cloud project where IAM bindings are applied.
+- `host_service_account_email` is the CI identity that needs to impersonate the Terraform service account.
+- `target_service_account_email` is the pre-existing service account used for Terraform operations in the target project.
+- `impersonation_roles` defaults to `roles/iam.serviceAccountTokenCreator` and `roles/iam.serviceAccountUser`.
+- `target_service_account_additional_roles` lets you add project-level permissions beyond the built-in baseline roles.
+
+This module assumes the target service account already exists before Terraform is applied.
+
+The host CI service account email is required because the module always creates explicit impersonation bindings for the target Terraform service account.
+
+<!-- BEGIN_TF_DOCS -->
+## Requirements
+
+| Name | Version |
+| ---- | ------- |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.0, < 2.0.0 |
+| <a name="requirement_google"></a> [google](#requirement\_google) | >= 6.0.0, < 8.0.0 |
+
+## Providers
+
+| Name | Version |
+| ---- | ------- |
+| <a name="provider_google"></a> [google](#provider\_google) | 7.32.0 |
+
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+| ---- | ---- |
+| [google_project_iam_member.target_service_account_additional_roles](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
+| [google_service_account_iam_member.impersonation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account_iam_member) | resource |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+| ---- | ----------- | ---- | ------- | :------: |
+| <a name="input_host_service_account_email"></a> [host\_service\_account\_email](#input\_host\_service\_account\_email) | Email of the host CI service account allowed to impersonate the target Terraform service account. | `string` | n/a | yes |
+| <a name="input_impersonation_roles"></a> [impersonation\_roles](#input\_impersonation\_roles) | IAM roles granted on the target service account to the host CI service account. | `list(string)` | <pre>[<br/>  "roles/iam.serviceAccountTokenCreator",<br/>  "roles/iam.serviceAccountUser"<br/>]</pre> | no |
+| <a name="input_project_id"></a> [project\_id](#input\_project\_id) | Google Cloud project ID for the target environment. | `string` | n/a | yes |
+| <a name="input_target_service_account_additional_roles"></a> [target\_service\_account\_additional\_roles](#input\_target\_service\_account\_additional\_roles) | Additional IAM roles to assign to the target Terraform service account. | `list(string)` | `[]` | no |
+| <a name="input_target_service_account_email"></a> [target\_service\_account\_email](#input\_target\_service\_account\_email) | Email of the pre-provisioned target Terraform service account in this project. | `string` | n/a | yes |
+
+## Outputs
+
+| Name | Description |
+| ---- | ----------- |
+| <a name="output_host_service_account_email"></a> [host\_service\_account\_email](#output\_host\_service\_account\_email) | Email address of the host CI service account allowed to impersonate the target Terraform service account. |
+| <a name="output_target_service_account_email"></a> [target\_service\_account\_email](#output\_target\_service\_account\_email) | Email address of the target Terraform service account. |
+<!-- END_TF_DOCS -->

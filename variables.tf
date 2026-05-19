@@ -6,8 +6,6 @@ variable "project_id" {
 variable "host_service_account_email" {
   description = "Email of the host CI service account allowed to impersonate the target Terraform service account."
   type        = string
-  default     = null
-  nullable    = true
 }
 
 variable "target_service_account_email" {
