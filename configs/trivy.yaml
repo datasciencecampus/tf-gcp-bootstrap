@@ -1,0 +1,27 @@
+# see https://aquasecurity.github.io/trivy/v0.67/docs/references/configuration/config-file/
+format: table
+exit-code: 1
+debug: false
+severity:
+  - UNKNOWN
+  - LOW
+  - MEDIUM
+  - HIGH
+  - CRITICAL
+ignorefile: ./configs/.trivyignore
+scan:
+  file-patterns:
+    - terraform:.*\.tf$
+    - terraform:.*\.tfvars$
+    - yaml:.*\.ya?ml$
+  skip-dirs:
+    - ./.github
+    - .terraform
+    - .venv
+misconfiguration:
+  include-non-failures: false
+  terraform:
+    vars:
+      - "**/*.tfvars"
+    exclude-downloaded-modules: true
+quiet: true

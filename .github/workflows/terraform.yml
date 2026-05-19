@@ -1,0 +1,62 @@
+name: Terraform
+
+on:
+  push:
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+env:
+  TERRAFORM_VERSION: "1.14.3"
+
+jobs:
+  fmt:
+    name: fmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      - name: terraform fmt
+        run: |
+          terraform fmt -check -recursive terraform || {
+            echo "Terraform formatting check failed. Run 'terraform fmt -recursive terraform' and commit the changes." >&2
+            exit 1
+          }
+
+  validate:
+    name: validate
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        dir:
+          - terraform/01_sandbox
+          - terraform/02_dev_nonprod
+          - terraform/03_stg_prod
+          - terraform/04_prd_prod
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      - name: terraform init
+        working-directory: ${{ matrix.dir }}
+        run: terraform init -backend=false
+      - name: terraform validate
+        working-directory: ${{ matrix.dir }}
+        run: terraform validate
+
+  tflint:
+    name: tflint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: terraform-linters/setup-tflint@080d6ca658a2061e2d096c8971d9c11b8fd3773f # v6.2.2
+      - name: tflint init
+        run: tflint --init --config ${{ github.workspace }}/configs/.tflint.hcl
+      - name: tflint
+        run: tflint --config ${{ github.workspace }}/configs/.tflint.hcl --chdir terraform

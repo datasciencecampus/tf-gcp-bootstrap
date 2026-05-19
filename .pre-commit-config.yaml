@@ -1,0 +1,109 @@
+---
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c  # frozen: v6.0.0
+    hooks:
+      - id: check-yaml
+        args:
+          - --allow-multiple-documents
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: detect-private-key
+      - id: fix-byte-order-marker
+      - id: check-added-large-files
+        args: ["--maxkb=500"]
+      - id: check-case-conflict
+      - id: check-merge-conflict
+
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: d0e12caebb2ab0ee8bf98181c8bfe9702bca103d  # frozen: v1.105.0
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_validate
+      - id: terraform_tflint
+      - id: terraform_trivy
+        args:
+          - --args=--config=configs/trivy.yaml
+
+  - repo: https://github.com/bridgecrewio/checkov.git
+    rev: 50aa413a42dee68ddafcb02b67d32770b322845c  # frozen: 3.2.529
+    hooks:
+      - id: checkov
+        args: [--config-file, ./configs/checkov.yml]
+
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: 68e8b45440415753fff70a312ece8da92ba85b4a  # frozen: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args:
+          - --baseline
+          - ./configs/.secrets.baseline
+
+  - repo: https://github.com/terraform-docs/terraform-docs
+    rev: "4025989e4fd50bb33592d7a3a4cfb3b46de9367a"  # frozen: v0.24.0
+    hooks:
+      - id: terraform-docs-go
+        name: terraform-docs (sandbox)
+        language_version: "1.24.6"
+        args:
+          - "markdown"
+          - "table"
+          - "--output-file"
+          - "README.md"
+          - "terraform/01_sandbox"
+  - repo: https://github.com/terraform-docs/terraform-docs
+    rev: "4025989e4fd50bb33592d7a3a4cfb3b46de9367a"  # frozen: v0.24.0
+    hooks:
+      - id: terraform-docs-go
+        name: terraform-docs (nonprod)
+        language_version: "1.24.6"
+        args:
+          - "markdown"
+          - "table"
+          - "--output-file"
+          - "README.md"
+          - "terraform/02_dev_nonprod"
+  - repo: https://github.com/terraform-docs/terraform-docs
+    rev: "4025989e4fd50bb33592d7a3a4cfb3b46de9367a"  # frozen: v0.24.0
+    hooks:
+      - id: terraform-docs-go
+        name: terraform-docs (preprod)
+        language_version: "1.24.6"
+        args:
+          - "markdown"
+          - "table"
+          - "--output-file"
+          - "README.md"
+          - "terraform/03_stg_prod"
+  - repo: https://github.com/terraform-docs/terraform-docs
+    rev: "4025989e4fd50bb33592d7a3a4cfb3b46de9367a"  # frozen: v0.24.0
+    hooks:
+      - id: terraform-docs-go
+        name: terraform-docs (prod)
+        language_version: "1.24.6"
+        args:
+          - "markdown"
+          - "table"
+          - "--output-file"
+          - "README.md"
+          - "terraform/04_prd_prod"
+  - repo: https://github.com/terraform-docs/terraform-docs
+    rev: "4025989e4fd50bb33592d7a3a4cfb3b46de9367a"  # frozen: v0.24.0
+    hooks:
+      - id: terraform-docs-go
+        name: terraform-docs (modules)
+        language_version: "1.24.6"
+        args:
+          - "markdown"
+          - "table"
+          - "--recursive"
+          - "--output-file"
+          - "README.md"
+          - "terraform/modules"
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: 5e2fb545eba1ea9dc051f6f962d52fe8f76a9794  # frozen: v0.15.13
+    hooks:
+      - id: ruff
+        args: [--fix, --config=./configs/ruff.toml]
+      - id: ruff-format
+        args: [--config=./configs/ruff.toml]

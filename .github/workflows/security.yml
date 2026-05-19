@@ -1,0 +1,33 @@
+name: Security
+
+on:
+  push:
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  # TEMPORARILY DISABLED DUE TO SECURITY INCIDENT
+  # trivy:
+  #   name: trivy
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+  #     - name: Run Trivy
+  #       uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # v0.35.0
+  #       with:
+  #         trivy-config: "./configs/trivy.yaml"
+  #         scan-type: "fs"
+  #         scan-ref: "."
+  checkov:
+    name: checkov
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - name: Run Checkov
+        uses: bridgecrewio/checkov-action@4048c972aae68d0b983a48bb3479aab2d877b898 # v12.3102.0
+        with:
+          config_file: "./configs/checkov.yml"
+          directory: "."
