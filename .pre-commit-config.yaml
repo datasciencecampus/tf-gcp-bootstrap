@@ -39,7 +39,7 @@ repos:
           - --baseline
           - ./configs/.secrets.baseline
           - --exclude-files
-          - ^\.pre-commit-config\.yaml$
+          - ^(\.pre-commit-config\.yaml|configs/\.secrets\.baseline)$
 
   - repo: https://github.com/terraform-docs/terraform-docs
     rev: "4025989e4fd50bb33592d7a3a4cfb3b46de9367a"  # frozen: v0.24.0
