@@ -29,7 +29,7 @@ A minimal publishable example is available in `examples/minimal`.
 
 ```hcl
 module "terraform_ci_setup" {
-   source = "github.com/datasciencecampus/terraform-ci-setup"
+   source = "github.com/datasciencecampus/tf-gcp-bootstrap"
 
    project_id                 = "my-gcp-project"
    host_service_account_email = "github-actions@host-project.iam.gserviceaccount.com"
