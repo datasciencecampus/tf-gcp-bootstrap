@@ -1,4 +1,4 @@
-# terraform-ci-setup
+# tf-gcp-bootstrap
 
 Terraform module for wiring GitHub Actions or other CI automation to a pre-provisioned Terraform service account in Google Cloud.
 
