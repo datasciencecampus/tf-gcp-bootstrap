@@ -21,9 +21,6 @@ repos:
       - id: terraform_fmt
       - id: terraform_validate
       - id: terraform_tflint
-      # - id: terraform_trivy
-      #   args:
-      #     - --args=--config=configs/trivy.yaml
 
   - repo: https://github.com/bridgecrewio/checkov.git
     rev: 50aa413a42dee68ddafcb02b67d32770b322845c  # frozen: 3.2.529
