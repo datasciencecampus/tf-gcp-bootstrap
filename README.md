@@ -42,6 +42,18 @@ module "terraform_ci_setup" {
 }
 ```
 
+For reproducible downstream use, pin a release tag once published:
+
+```hcl
+module "terraform_ci_setup" {
+   source = "github.com/datasciencecampus/tf-gcp-bootstrap?ref=v0.1.0"
+
+   project_id                   = "my-gcp-project"
+   host_service_account_email   = "github-actions@host-project.iam.gserviceaccount.com"
+   target_service_account_email = "terraform@my-gcp-project.iam.gserviceaccount.com"
+}
+```
+
 Run Terraform from the repository root:
 
 ```bash
@@ -61,6 +73,16 @@ terraform apply
 This module assumes the target service account already exists before Terraform is applied.
 
 The host CI service account email is required because the module always creates explicit impersonation bindings for the target Terraform service account.
+
+## Releases
+
+GitHub Releases are managed with Release Please on pushes to `main`.
+
+- Merge releasable changes with Conventional Commit subjects such as `fix:`, `feat:`, or `feat!:`.
+- Release Please keeps a release PR up to date and creates the GitHub release and tag when that PR is merged.
+- The tracked module version lives in `version.txt` and release notes are written to `CHANGELOG.md`.
+
+If release PRs created by GitHub Actions are blocked, enable `Allow GitHub Actions to create and approve pull requests` in the repository Actions settings.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
