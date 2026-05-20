@@ -55,7 +55,7 @@ terraform apply
 - `project_id` identifies the Google Cloud project where IAM bindings are applied.
 - `host_service_account_email` is the CI identity that needs to impersonate the Terraform service account.
 - `target_service_account_email` is the pre-existing service account used for Terraform operations in the target project.
-- `impersonation_roles` defaults to `roles/iam.serviceAccountTokenCreator` and `roles/iam.serviceAccountUser`.
+- `impersonation_roles` defaults to `roles/iam.serviceAccountTokenCreator`.
 - `target_service_account_additional_roles` lets you add project-level permissions beyond the built-in baseline roles.
 
 This module assumes the target service account already exists before Terraform is applied.
@@ -74,7 +74,7 @@ The host CI service account email is required because the module always creates 
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_google"></a> [google](#provider\_google) | 7.32.0 |
+| <a name="provider_google"></a> [google](#provider\_google) | 7.33.0 |
 
 ## Modules
 
@@ -92,7 +92,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_host_service_account_email"></a> [host\_service\_account\_email](#input\_host\_service\_account\_email) | Email of the host CI service account allowed to impersonate the target Terraform service account. | `string` | n/a | yes |
-| <a name="input_impersonation_roles"></a> [impersonation\_roles](#input\_impersonation\_roles) | IAM roles granted on the target service account to the host CI service account. | `list(string)` | <pre>[<br/>  "roles/iam.serviceAccountTokenCreator",<br/>  "roles/iam.serviceAccountUser"<br/>]</pre> | no |
+| <a name="input_impersonation_roles"></a> [impersonation\_roles](#input\_impersonation\_roles) | IAM roles granted on the target service account to the host CI service account. | `list(string)` | <pre>[<br/>  "roles/iam.serviceAccountTokenCreator"<br/>]</pre> | no |
 | <a name="input_project_id"></a> [project\_id](#input\_project\_id) | Google Cloud project ID for the target environment. | `string` | n/a | yes |
 | <a name="input_target_service_account_additional_roles"></a> [target\_service\_account\_additional\_roles](#input\_target\_service\_account\_additional\_roles) | Additional IAM roles to assign to the target Terraform service account. | `list(string)` | `[]` | no |
 | <a name="input_target_service_account_email"></a> [target\_service\_account\_email](#input\_target\_service\_account\_email) | Email of the pre-provisioned target Terraform service account in this project. | `string` | n/a | yes |

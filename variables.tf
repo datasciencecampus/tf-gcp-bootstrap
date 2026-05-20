@@ -18,7 +18,6 @@ variable "impersonation_roles" {
   type        = list(string)
   default = [
     "roles/iam.serviceAccountTokenCreator",
-    "roles/iam.serviceAccountUser",
   ]
 }
 
