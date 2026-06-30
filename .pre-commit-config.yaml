@@ -16,14 +16,14 @@ repos:
       - id: check-merge-conflict
 
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: d61ded22bf9aa0f757303ebcbb0d6d71c4b54015  # frozen: v1.106.0
+    rev: 05fd71a57a467ccf5598f7e836d3af4cf9225abb  # frozen: v1.108.0
     hooks:
       - id: terraform_fmt
       - id: terraform_validate
       - id: terraform_tflint
 
   - repo: https://github.com/bridgecrewio/checkov.git
-    rev: 69d73958b1e99ff26e879153be032b5264b76cf0  # frozen: 3.2.531
+    rev: 07a94fee7a8b06efbb8ffa811bcf3b3eeaaf9657  # frozen: 3.3.5
     hooks:
       - id: checkov
         args: [--config-file, ./configs/checkov.yml]
@@ -51,7 +51,7 @@ repos:
           - "README.md"
           - "."
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 0671d8ab202c4ac093b78433ae5baf74f3fc7246  # frozen: v0.15.15
+    rev: c59bba8fb259db0fec2bbb77ad8ba51ea7341b56  # frozen: v0.15.20
     hooks:
       - id: ruff
         args: [--fix, --config=./configs/ruff.toml]
