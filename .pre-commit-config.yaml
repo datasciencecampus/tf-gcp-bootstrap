@@ -51,7 +51,7 @@ repos:
           - "README.md"
           - "."
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 2eeb5678de71a00c0902cbda7105d328432f72cb  # frozen: v0.16.8
+    rev: 0be08a206f9c3180afd3e93bcc792ed5cb1f4db1  # frozen: v0.16.9
     hooks:
       - id: ruff
         args: [--fix, --config=./configs/ruff.toml]
